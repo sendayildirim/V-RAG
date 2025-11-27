@@ -6,10 +6,10 @@ from vector_store import VectorStore
 class RAGPipeline:
     """
     Retrieval-Augmented Generation pipeline
-    google/gemma-2-2b-it modeli kullanir
+    google/gemma-3-1b-it modeli kullanir
     """
 
-    def __init__(self, vector_store: VectorStore, model_name="google/gemma-2-2b-it", temperature=0.1):
+    def __init__(self, vector_store: VectorStore, model_name="google/gemma-3-1b-it", temperature=0.1):
         self.vector_store = vector_store
         self.model_name = model_name
         self.temperature = temperature
@@ -58,23 +58,29 @@ class RAGPipeline:
         """
         prompt = f"""You are a helpful assistant. Answer the question based on the given context from the book "Zuleika Dobson".
 
-Context:
-{context}
-
-Question: {question}
-
-Answer:"""
+        Context:
+        {context}
+        
+        Question: {question}
+        
+        Answer:"""
         return prompt
 
     def generate_answer(self, question: str, context: str, max_new_tokens: int = 100) -> str:
         """
         Verilen context ve soru ile cevap uret
         """
-        # Prompt olustur
-        prompt = self.create_prompt(question, context)
-
-        # Tokenize et
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
+        # Gemma-3 chat template 
+        messages = [
+            {"role": "user", "content": f"Answer the question based on the given context from the book 'Zuleika Dobson'.\n\nContext:\n{context}\n\nQuestion: {question}\n\nAnswer:"}
+        ]
+        inputs = self.tokenizer.apply_chat_template(
+            messages,
+            add_generation_prompt=True,
+            tokenize=True,
+            return_dict=True,
+            return_tensors="pt"
+        ).to(self.device)
 
         # Cevap uret
         with torch.no_grad():
@@ -87,13 +93,10 @@ Answer:"""
                 pad_token_id=self.tokenizer.eos_token_id
             )
 
-        # Cevabi decode et
-        full_response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+        # Sadece yeni token'lari decode et
+        answer = self.tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
 
-        # Sadece cevap kismini al (prompt'u cikar)
-        answer = full_response[len(prompt):].strip()
-
-        return answer
+        return answer.strip()
 
     def answer_question(self, question: str, top_k_children: int = 5, max_new_tokens: int = 100) -> Dict:
         """
