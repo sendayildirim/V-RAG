@@ -54,16 +54,16 @@ class DataLoader:
         return test_path
 
     def load_all_data(self):
-    """
-    Tum verileri indir ve yollarini dondur
-    """
-    book_path = self.download_book()
-    test_path = self.download_and_filter_questions()
-
-    return {
-        'book': book_path,
-        'test': test_path
-    }
+        """
+        Tum verileri indir ve yollarini dondur
+        """
+        book_path = self.download_book()
+        test_path = self.download_and_filter_questions()
+    
+        return {
+            'book': book_path,
+            'test': test_path
+        }
 
 if __name__ == "__main__":
     loader = DataLoader()
