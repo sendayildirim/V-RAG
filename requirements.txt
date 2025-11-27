@@ -1,6 +1,6 @@
 # Vektör veritabanı
 pymilvus==2.4.0
-milvus-lite==2.4.0
+milvus-lite==2.4.1
 
 # Embedding ve NLP
 sentence-transformers==2.3.1
