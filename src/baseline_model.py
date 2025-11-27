@@ -5,14 +5,11 @@ from typing import List, Dict
 class BaselineModel:
     """
     RAG olmadan sadece LLM ile cevap ureten baseline model
-    google/gemma-2-2b-it modeli kullanir
+    google/gemma-3-1b-it modeli kullanir
     """
 
     def __init__(self, model_name="google/gemma-3-1b-it"):
         self.model_name = model_name
-
-        # Gemma-3 chat template kullanip kullanmadigini kontrol et
-        self.use_chat_template = "gemma-3" in model_name.lower()
 
         # Device ayarla (GPU varsa kullan)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -48,49 +45,31 @@ Answer:"""
         """
         Context olmadan sadece soru ile cevap uret
         """
-        if self.use_chat_template:
-            # Gemma-3 chat template kullan
-            messages = [
-                {"role": "user", "content": f"Answer the question about the book 'Zuleika Dobson' by Max Beerbohm.\n\nQuestion: {question}\n\nAnswer:"}
-            ]
-            inputs = self.tokenizer.apply_chat_template(
-                messages,
-                add_generation_prompt=True,
-                tokenize=True,
-                return_dict=True,
-                return_tensors="pt"
-            ).to(self.device)
+        # Gemma-3 chat template kullan
+        messages = [
+            {"role": "user", "content": f"Answer the question about the book 'Zuleika Dobson' by Max Beerbohm.\n\nQuestion: {question}\n\nAnswer:"}
+        ]
+        inputs = self.tokenizer.apply_chat_template(
+            messages,
+            add_generation_prompt=True,
+            tokenize=True,
+            return_dict=True,
+            return_tensors="pt"
+        ).to(self.device)
 
-            # Cevap uret
-            with torch.no_grad():
-                outputs = self.model.generate(
-                    **inputs,
-                    max_new_tokens=max_new_tokens,
-                    temperature=0.1,
-                    do_sample=True,
-                    top_p=0.9,
-                    pad_token_id=self.tokenizer.eos_token_id
-                )
+        # Cevap uret
+        with torch.no_grad():
+            outputs = self.model.generate(
+                **inputs,
+                max_new_tokens=max_new_tokens,
+                temperature=0.1,
+                do_sample=True,
+                top_p=0.9,
+                pad_token_id=self.tokenizer.eos_token_id
+            )
 
-            # Sadece yeni token'lari decode et
-            answer = self.tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
-        else:
-            # Eski yontem (Gemma-2 icin)
-            prompt = self.create_prompt(question)
-            inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
-
-            with torch.no_grad():
-                outputs = self.model.generate(
-                    **inputs,
-                    max_new_tokens=max_new_tokens,
-                    temperature=0.1,
-                    do_sample=True,
-                    top_p=0.9,
-                    pad_token_id=self.tokenizer.eos_token_id
-                )
-
-            full_response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-            answer = full_response[len(prompt):].strip()
+        # Sadece yeni token'lari decode et
+        answer = self.tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
 
         return answer.strip()
 
