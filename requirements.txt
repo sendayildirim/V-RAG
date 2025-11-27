@@ -1,0 +1,29 @@
+# Vektör veritabanı
+pymilvus==2.4.0
+milvus-lite==2.4.0
+
+# Embedding ve NLP
+sentence-transformers==2.3.1
+transformers==4.36.2
+torch==2.1.2
+
+# Metin işleme
+nltk==3.8.1
+tiktoken==0.5.2
+
+# Metrik hesaplama
+rouge-score==0.1.2
+sacrebleu==2.3.1
+evaluate==0.4.1
+
+# Veri işleme
+pandas==2.1.4
+numpy==1.26.2
+
+# Utilities
+requests==2.31.0
+tqdm==4.66.1
+
+# Colab için GPU desteği
+accelerate==0.25.0
+bitsandbytes==0.41.3
