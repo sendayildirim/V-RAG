@@ -199,9 +199,13 @@ class ExperimentRunner:
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(result, f, indent=2, ensure_ascii=False)
 
-    def save_summary(self, all_results: List[Dict]):
+    def save_summary(self, all_results: List[Dict], summary_filename: str = "experiment_summary"):
         """
         Tum sonuclarin ozetini CSV ve JSON olarak kaydet
+
+        Args:
+            all_results: Deney sonuclari listesi
+            summary_filename: Ozet dosyalarinin adi (uzantisiz)
         """
         # DataFrame olustur
         summary_data = []
@@ -231,12 +235,12 @@ class ExperimentRunner:
         df = pd.DataFrame(summary_data)
 
         # CSV olarak kaydet
-        csv_path = self.results_dir / "experiment_summary.csv"
+        csv_path = self.results_dir / f"{summary_filename}.csv"
         df.to_csv(csv_path, index=False)
         print(f"\nOzet CSV kaydedildi: {csv_path}")
 
         # JSON olarak kaydet
-        json_path = self.results_dir / "experiment_summary.json"
+        json_path = self.results_dir / f"{summary_filename}.json"
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(all_results, f, indent=2, ensure_ascii=False)
         print(f"Ozet JSON kaydedildi: {json_path}")
