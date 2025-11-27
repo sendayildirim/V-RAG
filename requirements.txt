@@ -2,10 +2,10 @@
 pymilvus==2.4.0
 milvus-lite==2.4.1
 
-# Embedding ve NLP
+# Embedding
 sentence-transformers==2.3.1
 transformers==4.36.2
-torch==2.1.2
+torch==2.2.2
 
 # Metin işleme
 nltk==3.8.1
