@@ -8,7 +8,7 @@ class BaselineModel:
     google/gemma-2-2b-it modeli kullanir
     """
 
-    def __init__(self, model_name="google/gemma-2-2b-it"):
+    def __init__(self, model_name="google/baseline/gemma-3-1b-it")"):
         self.model_name = model_name
 
         # Device ayarla (GPU varsa kullan)
