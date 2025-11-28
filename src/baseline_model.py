@@ -20,7 +20,7 @@ class BaselineModel:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
-            torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
+            dtype=torch.float16 if self.device == "cuda" else torch.float32,
             device_map="auto" if self.device == "cuda" else None,
             low_cpu_mem_usage=True
         )
@@ -62,7 +62,7 @@ Answer:"""
             outputs = self.model.generate(
                 **inputs,
                 max_new_tokens=max_new_tokens,
-                temperature=0.1,
+                temperature=0.5,
                 do_sample=True,
                 top_p=0.9,
                 pad_token_id=self.tokenizer.eos_token_id
