@@ -50,7 +50,7 @@ class ExperimentRunner:
         print(f"{'='*70}")
 
         parent_size = child_size * 2
-        db_path = f"./milvus_c{child_size}_o{overlap}_t{temperature}.db"
+        db_path = f"./milvus_c{child_size}_o{overlap}_t{int(temperature*100)}.db"
 
         # Baslangic metrikleri
         start_time = time.time()
