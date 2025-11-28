@@ -23,12 +23,11 @@ class RAGPipeline:
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
-            dtype=torch.float16 if self.device == "cuda" else torch.float32,
-            device_map="auto" if self.device == "cuda" else None,
+            torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
             low_cpu_mem_usage=True
         )
-
-        if self.device == "cpu":
+        
+        if self.device == "cuda":
             self.model = self.model.to(self.device)
 
         print("Model yuklendi!")
